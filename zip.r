@@ -34,7 +34,7 @@ train_x <- train_data[,-1]
 
 #####Test data#############
 
-test_data <- read.table("zip.test", sep =" ") # read the test data
+test_data <- read.table("data/zip_train.txt", sep =" ") # read the test data
 
 
 #select the first column of test data which denotes the class labels and save them in a list
