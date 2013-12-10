@@ -1,5 +1,5 @@
 ####train data ####
-train_data <- read.table('zip.train') #read the entire training data
+train_data <- read.table('data/zip_train.txt') #read the entire training data
 
 
 #this is for splitting the data set into training data of individual digits.
