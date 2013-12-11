@@ -1,0 +1,56 @@
+require(MASS)
+
+
+
+#TRAINING WITH QDA
+
+tr_data <- read.table('/Users/rob/Documents/ML-Kaggle/data/zip_train.txt')
+
+tr_input <- tr_data[,-1]
+tr_output <- tr_data[,1]
+
+trj_data <- tr_data
+trj_data[, -1] <- apply(tr_data[, -1], 2, jitter)
+
+trj_input <- trj_data[,-1]
+trj_output <- trj_data[,1]
+
+qda_model <- qda(formula = paste("V1 ~", paste("V",2:257,sep="",collapse=" + ")), data = trj_data, x = trj_input, grouping = trj_output)
+
+
+
+#TESTING ON TRAINING DATA
+
+result <- predict(qda_model, tr_input)$class
+
+l <- length(result)
+error_sum <- 0
+current_error <- 0
+
+for (i in 1:l){
+	
+	o <- tr_output[i]
+	r <- result[i]
+	
+	if (o == r){
+		current_error <- 0
+	} else {
+		current_error <- 1
+	}
+	
+	error_sum <- error_sum + current_error
+	
+}
+
+error_rate = error_sum / l
+tr_accuracy = 1 - error_rate
+
+tr_accuracy
+
+
+
+#GENERATING RESPONSE ON TEST DATA
+
+te_data <- read.table('/Users/rob/Documents/ML-Kaggle/data/test_data.txt')
+
+result <- predict(qda_model, te_data)$class
