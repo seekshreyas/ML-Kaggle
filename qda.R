@@ -21,16 +21,15 @@ qda_model <- qda(formula = paste("V1 ~", paste("V",2:257,sep="",collapse=" + "))
 
 #TESTING ON TRAINING DATA
 
-result <- predict(qda_model, tr_input)$class
+tr_result <- predict(qda_model, tr_input)$class
 
 l <- length(result)
 error_sum <- 0
 current_error <- 0
-
 for (i in 1:l){
 	
 	o <- tr_output[i]
-	r <- result[i]
+	r <- tr_result[i]
 	
 	if (o == r){
 		current_error <- 0
@@ -53,4 +52,6 @@ tr_accuracy
 
 te_data <- read.table('/Users/rob/Documents/ML-Kaggle/data/test_data.txt')
 
-result <- predict(qda_model, te_data)$class
+te_result <- predict(qda_model, te_data)$class
+
+write.csv(te_result, file="/Users/rob/Documents/ML-Kaggle/data/qda_results.csv")
