@@ -52,11 +52,46 @@ accuracy
 
 
 # Bagging
+# -------------------
+
 library(ipred)
 baggedTree<-bagging(V1~.,data=train_data)
-myBaggingPredictions.Proba.Spam<-predict(baggedTree,newdata=train_data[,2:257])
+myBaggingPredictions.Proba.Digit<-predict(baggedTree,newdata=train_data[,2:257])
 my.digit.threshold=0.5
 
+pic.digit<-(myBaggingPredictions.Proba.Digit>my.digit.threshold)
+
+actual.digit<-train_data[,1]
+
+agreement.Vector<-(pic.digit==actual.digit)
+length.Test.Vector<-length(actual.digit)
+misClassif<-1-sum(agreement.Vector)/length.Test.Vector
+misClassif
+# [1] 0.7640927
+accuracy <- sum(agreement.Vector)/length.Test.Vector
+accuracy
+# [1] 0.2359073
+
+
+#####random Forest
+library(randomForest)
+# rfModel<-randomForest(spam~.,data=training.data.spam,ntrees=1000)
+
+rfModel2<-randomForest(train_data[,2:257],as.factor(train_data[,1]),ntrees=1000)
+
+myRandomForestPredictions.digit<-predict(rfModel2,newdata=train_data[,2:257])
+
+# my.spam.threshold=.5
+
+agreement.Vector<-(pic.digit==actual.digit)
+length.Test.Vector<-length(actual.digit)
+misClassif<-1-sum(agreement.Vector)/length.Test.Vector
+misClassif
+# [1] 0.7640927
+accuracy <- sum(agreement.Vector)/length.Test.Vector
+accuracy
+
+# [1] 0.04954368
 
 
 
