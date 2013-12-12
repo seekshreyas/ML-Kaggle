@@ -13,16 +13,15 @@ names(train_data)
 
 library(rpart)
 
-rpartModel.train.data<-rpart(paste("V1 ~", paste("V",2:257,sep="",collapse=" + ")),data=train_data)
+rpartModel.train.data<-rpart(formula = paste("V1 ~", paste("V",2:257,sep="",collapse=" + ")), data=train_data)
 quartz("Plot Tree Model on HandWritten Data")
 plot(rpartModel.train.data)
 text(rpartModel.train.data)
 
-rpartModel.more.train.Data<-rpart(paste("V1 ~", paste("V",2:257,sep="",collapse=" + ")),data=train_data)                                                                                                                                                                
+rpartModel.more.train.Data<-rpart(formula = paste("V1 ~", paste("V",2:257,sep="",collapse=" + ")), data=train_data)                                                                                                                                                                
 quartz("Plot Tree based model for handwritten data")
 plot(rpartModel.more.train.Data)
 text(rpartModel.more.train.Data,pretty=TRUE)
-table(train_data$V1)
 
 
 rpartModel.train.pred.data<-rpart(V1~.,data=train_data)

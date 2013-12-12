@@ -4,7 +4,7 @@ require(MASS)
 
 #TRAINING WITH LDA
 
-tr_data <- read.table('/Users/rob/Documents/ML-Kaggle/data/zip_train.txt')
+tr_data <- read.table('data/zip_train.txt')
 
 tr_input <- tr_data[,-1]
 tr_output <- tr_data[,1]
@@ -17,7 +17,7 @@ lda_model <- lda(formula = paste("V1 ~", paste("V",2:257,sep="",collapse=" + "))
 
 tr_result <- predict(lda_model, tr_input)$class
 
-l <- length(result)
+l <- length(tr_result)
 error_sum <- 0
 current_error <- 0
 for (i in 1:l){
@@ -44,8 +44,8 @@ tr_accuracy
 
 #GENERATING RESPONSE ON TEST DATA
 
-te_data <- read.table('/Users/rob/Documents/ML-Kaggle/data/test_data.txt')
+te_data <- read.table('data/test_data.txt')
 
 te_result <- predict(qda_model, te_data)$class
 
-write.csv(te_result, file="/Users/rob/Documents/ML-Kaggle/data/qda_results.csv")
+write.csv(te_result, file="data/qda_results.csv")
