@@ -11,86 +11,85 @@ boxplot(train_data)
 
 names(train_data)
 
+
+#TRAINING WITH QDA
+
+tr_data <- read.table('data/zip_train.txt')
+
+tr_input <- tr_data[,-1]
+tr_output <- tr_data[,1]
+
+trj_data <- tr_data
+trj_data[, -1] <- apply(tr_data[, -1], 2, jitter)
+
+trj_input <- trj_data[,-1]
+trj_output <- trj_data[,1]
+
 library(rpart)
-
-rpartModel.train.data<-rpart(formula = paste("V1 ~", paste("V",2:257,sep="",collapse=" + ")), data=train_data)
-quartz("Plot Tree Model on HandWritten Data")
-plot(rpartModel.train.data)
-text(rpartModel.train.data)
-
-rpartModel.more.train.Data<-rpart(formula = paste("V1 ~", paste("V",2:257,sep="",collapse=" + ")), data=train_data)                                                                                                                                                                
-quartz("Plot Tree based model for handwritten data")
-plot(rpartModel.more.train.Data)
-text(rpartModel.more.train.Data,pretty=TRUE)
-
-
-rpartModel.train.pred.data<-rpart(V1~.,data=train_data)
-quartz("Tree based model for Train model using SA Code")
-plot(rpartModel.train.pred.data)
-text(rpartModel.train.pred.data,pretty=TRUE)
-
-
-
-# Tree Based Prediction
-# ----------------------
-myRpartPredictions.Proba.Pic<-predict(rpartModel.train.pred.data,newdata=train_data[,2:257])
-my.digit.threshold=0.5
-
-pic.digit<-(myRpartPredictions.Proba.Pic>my.digit.threshold)
-
-actual.digit<-train_data[,1]
-
-agreement.Vector<-(pic.digit==actual.digit)
-length.Test.Vector<-length(actual.digit)
-misClassif<-1-sum(agreement.Vector)/length.Test.Vector
-misClassif
-# [1] 0.7329584
-accuracy <- sum(agreement.Vector)/length.Test.Vector
-accuracy
-# [1] 0.2670416
-
-
-# Bagging
-# -------------------
-
 library(ipred)
-baggedTree<-bagging(V1~.,data=train_data)
-myBaggingPredictions.Proba.Digit<-predict(baggedTree,newdata=train_data[,2:257])
-my.digit.threshold=0.5
-
-pic.digit<-(myBaggingPredictions.Proba.Digit>my.digit.threshold)
-
-actual.digit<-train_data[,1]
-
-agreement.Vector<-(pic.digit==actual.digit)
-length.Test.Vector<-length(actual.digit)
-misClassif<-1-sum(agreement.Vector)/length.Test.Vector
-misClassif
-# [1] 0.7640927
-accuracy <- sum(agreement.Vector)/length.Test.Vector
-accuracy
-# [1] 0.2359073
-
-
-#####random Forest
 library(randomForest)
-# rfModel<-randomForest(spam~.,data=training.data.spam,ntrees=1000)
+# rpartModel.tree<-rpart(formula = paste("V1 ~", paste("V",2:257,sep="",collapse=" + ")), data=train_data)
 
-rfModel2<-randomForest(train_data[,2:257],as.factor(train_data[,1]),ntrees=1000)
 
-myRandomForestPredictions.digit<-predict(rfModel2,newdata=train_data[,2:257])
 
-# my.spam.threshold=.5
 
-agreement.Vector<-(pic.digit==actual.digit)
-length.Test.Vector<-length(actual.digit)
-misClassif<-1-sum(agreement.Vector)/length.Test.Vector
-misClassif
-# [1] 0.7640927
-accuracy <- sum(agreement.Vector)/length.Test.Vector
-accuracy
 
-# [1] 0.04954368
+
+
+rpartModel.tree <- rpart(formula = paste("V1 ~", paste("V",2:257,sep="",collapse=" + ")), data = trj_data)
+quartz("Plot Tree Model on HandWritten Data")
+plot(rpartModel.tree)
+text(rpartModel.tree)
+
+baggedTree<-bagging(V1~.,data=train_data)
+rfModel2<-randomForest(tr_input,as.factor(tr_output),ntrees=1000)
+
+
+
+
+#TESTING ON TRAINING DATA
+# tr_result <- predict(rpartModel.tree, tr_input)
+# tr_result <- predict(baggedTree, tr_input)
+tr_result <- predict(rfModel2, tr_input)
+
+l <- length(tr_result)
+error_sum <- 0
+current_error <- 0
+for (i in 1:l){
+  
+  o <- tr_output[i]
+  r <- tr_result[i]
+  
+  if (o == r){
+    current_error <- 0
+  } else {
+    current_error <- 1
+  }
+  
+  error_sum <- error_sum + current_error
+  
+}
+
+error_rate = error_sum / l
+tr_accuracy = 1 - error_rate
+
+tr_accuracy
+
+#GENERATING RESPONSE ON TEST DATA
+
+te_data <- read.table('data/test_data.txt')
+
+
+#te_result <- predict(rpartModel.tree, te_data)
+#te_result <- predict(baggedTree, te_data)
+te_result <- predict(rfModel2, te_data)
+
+te_result
+
+#write.csv(te_result, file="output/baggedTree.csv")
+#write.csv(te_result, file="output/rpartTreeModel.csv")
+write.csv(te_result, file="output/randomForest.csv")
+
 
 
 
